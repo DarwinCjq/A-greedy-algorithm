@@ -1,0 +1,175 @@
+import java.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Stack;
+public class Path{
+// the former 4 elements of mx and my represent up,down,right,left. while the latter 4 elements
+of mx and my represent right-up, left-up, right-down, left-down
+public final static int[] dx = { 0, -1, 0, 1, -1, -1, 1, 1 };
+public final static int[] dy = { -1, 0, 1, 0, 1, -1, -1, 1 };
+// 1 represents obstacles and boundary
+final static public int[][] map = {
+{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+public static void main(String[] args) {
+Point start = new Point(1, 1);
+Point end = new Point(10, 13);
+for (int i = 0; i < 10; i++) {// we have 10 goal states, so i should be less than 10
+Stack<Point> stack = printPath(start, end);//I use a stack to store the path
+if (null == stack) {
+System.out.println("Not accessible !");
+} else {
+while (!stack.isEmpty()) {//pop out the elemnt until the stack is empty
+System.out.print(stack.pop() + " -> ");
+}
+System.out.print( " New Round -> ");
+System.out.println();
+}
+start=end;
+int x=1+(int)(Math.random()* 13);//generate a int number whose range is from 1 to
+13,because the map is 15 by 15, 0 and 14 are boundary
+int y=1+(int)(Math.random()* 13);//generate a int number whose range is from 1 to
+13
+end= new Point(x, y);//when the agent reaches to one goal state, update the goal state
+to get new one
+}
+}
+public static Stack<Point> printPath(Point start, Point end) {
+ArrayList<Point> open = new ArrayList<Point>();//define open table
+ArrayList<Point> close = new ArrayList<Point>();//define close table
+open .clear();
+close.clear();//initialize open and close
+Stack<Point> pathStack = new Stack<Point>();
+start.parent = null;
+Point currentPoint = new Point(start.x, start.y);//at the beginning, I take the start
+point as the current point
+//close.add(currentPoint);
+boolean flag = true;
+while(flag) {
+for (int i = 0; i < 8; i++) {
+int fx = currentPoint.x + dx[i];
+int fy = currentPoint.y + dy[i];
+Point tempPoint = new Point(fx,fy);
+if (map[fx][fy] == 1) {
+// the boundary and obstacles are 1
+continue;
+} else {
+if(end.equals(tempPoint)) {//if the temporary point equal the goal state
+flag = false;
+end.parent = currentPoint;
+break;
+}
+if(i<4) {
+tempPoint.G = currentPoint.G + 10;// the cost of directions up, down,
+right, left is 10
+}else {
+tempPoint.G = currentPoint.G + 14;//the cost of directions right-up,
+left-up, right-down, left-down is 14. In this case, because the type of G is int, while the square
+root of 2 is a double data which does not represent G. So I use 14 represents the square root
+of 2 and 10 represents 1
+}
+tempPoint.H = Point.getDis(tempPoint,end);//Manhattan distance
+tempPoint.F = tempPoint.G + tempPoint.H;//f(n)=g(n)+h(n)
+if(open.contains(tempPoint)) {//whether tempPoint exists in open table
+int pos = open.indexOf(tempPoint );
+Point temp = open.get(pos);
+if(temp.F > tempPoint.F) {
+// if (tempPoint exists in open table) {
+// if (the cost of tempPoint is smaller than that of open table)
+// update the cost of open table；
+// }
+open.remove(pos);
+open.add(tempPoint);
+tempPoint.parent = currentPoint;
+}
+}else if(close.contains(tempPoint)){
+// else {//Y exists in close table
+// if (the cost of tempPoint is smaller than that of close table)
+{
+// update the cost of close table；
+//remove the relevant point from close table, and add tempPoint into open
+table
+//
+// }
+// }
+int pos = close.indexOf(tempPoint );
+Point temp = close.get(pos);
+if(temp.F > tempPoint.F) {
+close.remove(pos);
+open.add(tempPoint);
+tempPoint.parent = currentPoint;
+}
+}else {
+open.add(tempPoint);
+tempPoint.parent = currentPoint;
+}
+}
+}//end for
+if(open.isEmpty()) {
+return null;
+}//NO path
+if(false==flag) {
+break;
+}//find a path
+open.remove(currentPoint);
+close.add(currentPoint);
+Collections.sort(open);
+currentPoint = open.get(0);
+}//end while
+Point node = end;
+while(node.parent!=null) {
+pathStack.push(node);
+node = node.parent;
+}
+return pathStack;
+}
+}
+
+******************************两个文件的分割线**************************************************************
+
+class Point implements Comparable<Point>{
+public int x;
+public int y;
+public Point parent;
+public int F, G, H;
+public Point(int x, int y) {
+super();
+this.x = x;
+this.y = y;
+this.F = 0;
+this.G = 0;
+this.H = 0;
+}
+public int compareTo(Point o) {
+// TODO Auto-generated method stub
+return this.F - o.F;
+}
+public boolean equals(Object obj) {
+Point point = (Point) obj;
+if (point.x == this.x && point.y == this.y)
+return true;
+else {
+return false;
+}
+}
+public static int getDis(Point p1, Point p2) {
+int dis = Math.abs(p1.x - p2.x) * 10 + Math.abs(p1.y - p2.y) * 10;
+return dis;
+}
+public String toString() {
+return "(" + this.x + "," + this.y + ")";
+}
+}
