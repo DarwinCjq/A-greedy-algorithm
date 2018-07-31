@@ -2,8 +2,8 @@
 (1) Find the point which has the minimum cost to the goal state as the current point
 from the open table;
 (2) Input the current point into the close table;
-(3) Test 8 points of the current point( those 8 directions I just mentioned), if those
-points exist and are not in the close table, repeat below works:
+(3) Test 8 points of the current point( 8 directions：up, down, right, left, right-up, left-up, right-down,
+left-down), if thosepoints exist and are not in the close table, repeat below works:
 (4) If one of them equal the goal state, the current point is the parent point and exit
 loop;
 (5) If one of them does not exist in the open table, calculate the cost from it to the
