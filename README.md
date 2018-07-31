@@ -41,3 +41,17 @@ Add Y into the open table;}
 Input point x into the close table;
 Resort the open table by the cost of each point;
 }
+
+
+
+Further Question
+At this time, I found a question that if we have some known goal states, we have to
+plan a appropriate route. Because if we just make the agent get to each goal state
+orderly, it is likely to waste much cost and time. So in order to avoid extra cost and
+time, I think we can sequence all goal states in the order of small to large, which
+means the agent always chooses the closest goal to get to.
+
+This question mainly tells us when we have several targets at the same
+time, not only does we need to use A* algorithm to get a optimal route to each
+target, but also sequence these targets according to their own distances that from
+the start state to their goal states.
